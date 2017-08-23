@@ -1,0 +1,91 @@
+<html>
+<body>
+<i>Signing in using your Google account...</i>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.3.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyCGUHS5j7g8CZXxJrKmOQnMKRVd-A5luUI",
+    authDomain: "silv3rjam-c86a2.firebaseapp.com",
+    databaseURL: "https://silv3rjam-c86a2.firebaseio.com",
+    projectId: "silv3rjam-c86a2",
+    storageBucket: "silv3rjam-c86a2.appspot.com",
+    messagingSenderId: "201351615676"
+  };
+  firebase.initializeApp(config);
+</script>
+<script>
+
+var provider = new firebase.auth.GoogleAuthProvider();
+
+function returnToApp(url) {
+    window.open(url);
+}
+
+firebase.auth().getRedirectResult().then(function(result) {
+
+debugger;
+
+    if (!result.user) {
+        console.log("No redirect result...");
+        return;
+    }
+
+	var token = result.user.refreshToken;
+
+	var url = 'pythonista://fbauth?action=run&argv=%22token;' + token + '%22&argv=%22email;' + result.user.email + '%22&argv=%22uid;' + result.user.uid + '%22';
+	//alert('Opening URL: ' + url);
+	console.log('Opening URL: ' + url);
+
+	//window.location.replace(url);
+	var win = window.open(url);
+
+    if (win === null) {
+        document.write("Popup failed, <a href='" + url + "' onClick=\"returnToApp('" + url + "'); return false;\">click to return to app...</a><br/><br/>");
+    }
+});
+
+firebase.auth().onAuthStateChanged(function(user) {
+	
+  if (user) {
+    // User is signed in.
+    var displayName = user.displayName;
+    var email = user.email;
+    var emailVerified = user.emailVerified;
+    var photoURL = user.photoURL;
+    var isAnonymous = user.isAnonymous;
+    var uid = user.uid;
+    var providerData = user.providerData;
+
+  } else {
+
+/*
+	firebase.auth().signInWithPopup(provider).then(function(result) {
+		var token = result.credential.accessToken;
+
+		var url = 'pythonista://fbauth?action=run&argv="token;' + result.credential.accessToken + '"&argv="email;' + result.user.email + '"';
+		console.log('Opening URL: ' + url);
+
+		window.open(url);
+	});
+*/
+
+	firebase.auth().signInWithRedirect(provider);
+  }
+});
+</script>
+
+<br /><br />
+<input id="signout" value="Sign in again" type="button"/>
+
+<script>
+$("#signout").click(function(evt){
+	evt.preventDefault();
+	console.log("Signing out...");
+	firebase.auth().signOut();
+});
+</script>
+
+</body>
+</html>
