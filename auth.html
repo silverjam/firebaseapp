@@ -25,25 +25,39 @@ function returnToApp(url) {
 
 firebase.auth().getRedirectResult().then(function(result) {
 
-debugger;
-
     if (!result.user) {
         console.log("No redirect result...");
         return;
     }
 
 	var token = result.user.refreshToken;
+	
+	var url = window.location.href;
+	var index = url.indexOf('?cb=');
+	
+	alert(index);
+	
+	var cb_url = url.substring(index).substring(4);
+	
+	alert(url)
+	alert(cb_url);
+	
+	cb_url.replace('REFRESH_TOKEN', token)
 
-	var url = 'pythonista://fbauth?action=run&argv=%22token;' + token + '%22&argv=%22email;' + result.user.email + '%22&argv=%22uid;' + result.user.uid + '%22';
+	/* var url = 'pythonista://fbauth?action=run&argv=%22token;' + token + '%22&argv=%22email;' + result.user.email + '%22&argv=%22uid;' + result.user.uid + '%22';
 	//alert('Opening URL: ' + url);
-	console.log('Opening URL: ' + url);
+	console.log('Opening URL: ' + url); */
+	
+	
 
-	//window.location.replace(url);
-	var win = window.open(url);
+	window.location.replace(cb_url);
+	/*
+	var win = window.open(cb_url, '_blank');
 
     if (win === null) {
-        document.write("Popup failed, <a href='" + url + "' onClick=\"returnToApp('" + url + "'); return false;\">click to return to app...</a><br/><br/>");
+        document.write("Popup failed, <a href='" + cb_url + "' onClick=\"returnToApp('" + cb_url + "'); return false;\">click to return to app...</a><br/><br/>");
     }
+  */
 });
 
 firebase.auth().onAuthStateChanged(function(user) {
